@@ -33,25 +33,27 @@ object Main extends App {
 
 
   def topRestaurantByRating(n:Int):List[Int] = {
-    if(n <= 0)  throw new IllegalArgumentException("Can you please tell me how to get top -10 numbers from numbers 1-100?")
+    if(n <= 0)  throw new IllegalArgumentException("Negative number")
     val ratings = ListMap(restaurants.map(x => x._1->x._2.rating).toSeq.sortWith(_._2 > _._2):_*)
     /*
     First we are mapping restaurants to contain only id and ratings.
     Then we are sorting the map by key in descending order.
     */
-    ratings.keys.toList.slice(0,n) // return List of restaurant Id by rating in descending order
+    if(ratings.keys.size < n)  throw new IllegalArgumentException(s"Only ${ratings.keys.toList} restaurants meets the requirement")
+    else  ratings.keys.toList.slice(0,n) // return List of restaurant Id by rating in descending order
   }
 
 
   def topRestaurant(location:String,restaurantType:List[String],n:Int):List[Int] = {
-    if(n <= 0)  throw new IllegalArgumentException("Can you please tell me how to get top -10 numbers from numbers 1-100?")
+    if(n <= 0)  throw new IllegalArgumentException("Negative number")
 
     val filtered = restaurants.filter(x =>
       x._2.location == location && x._2.restaurantType == restaurantType)
     /*
     Filter out the restaurant which does not belong to given location or does not have given type
-
     */
+    if (filtered.size <= 0) throw new IllegalArgumentException("No restaurants satisfying the criteria")
+
     val ratings = filtered.map(x => x._1->x._2.rating)  // It will create Map(restaurantId -> rating).
     val sortedRatings = ListMap(ratings.toSeq.sortWith(_._2 > _._2):_*).keys // Will sort Map by value in descending order
     if(sortedRatings.size < n)  throw new IllegalArgumentException(s"Only $sortedRatings restaurants meets the requirement")
@@ -60,21 +62,23 @@ object Main extends App {
 
 
   def topRestaurantByVote(location:String,n:Int):List[Int] = {
-    if(n <= 0)  throw new IllegalArgumentException("Can you please tell me how to get top -10 numbers from numbers 1-100?")
+    if(n <= 0)  throw new IllegalArgumentException("Negative number")
     val filtered = restaurants.filter(x => x._2.location == location && x._2.numberOfVotes != 0)
     /*
     Filter out the restaurant which does not belong to given location or has not any votes
      */
+    if(filtered.size <= 0) throw new IllegalArgumentException("No restaurants satisfying the criteria")
+
     val ratings = filtered.map(x => (x._2.numberOfVotes,x._2.rating,x._1)).toList // Create list of tuples(votes,rating,id)
     val sortedRatings = ratings.sortBy(t => (t._1,-t._2)) // first sort by votes in ascending order if equal then sort by rating in descending order
     sortedRatings.map(x => x._3).slice(0,n) // return List of restaurant Id's
   }
 
-  println(noOfCuisines()("Basavanagudi"))
-  println(restaurants(5))
-  println(noOfDistinctLocations().length)
-  println(topRestaurantByRating(100))
-  println(topRestaurant("Basavanagudi",List("Casual Dining"),2))
+  //println(noOfCuisines()("Basavanagudi"))
+  //println(restaurants(5))
+  //println(noOfDistinctLocations().length)
+  //println(topRestaurantByRating(100))
+  println(topRestaurant("dsadasdasdas",List("Casual Dining"),2))
 
-  println(topRestaurantByVote("Basavanagudi",20))
+  //println(topRestaurantByVote("Basavanagudi",20))
 }
