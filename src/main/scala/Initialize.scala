@@ -3,7 +3,7 @@ import Restaurant.Restaurant
 object Initialize {
 
   def parseRow(row:String):List[String] = {
-    row.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)",-1).toList
+    row.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)",-1).toList  // Will given List of attributes for given row
   }
 
   def initialize():Map[Int,Restaurant] ={

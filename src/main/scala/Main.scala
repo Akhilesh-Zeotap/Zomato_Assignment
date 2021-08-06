@@ -1,5 +1,4 @@
 import Restaurant.restaurants
-import scala.collection.immutable.ListMap
 
 object Main extends App {
 
@@ -34,17 +33,17 @@ object Main extends App {
 
   def topRestaurantByRating(n:Int):List[Int] = {
     if(n <= 0)  throw new IllegalArgumentException("Negative number")
-    val ratings = ListMap(restaurants.map(x => x._1->x._2.rating).toSeq.sortWith(_._2 > _._2):_*)
+    val ratings = restaurants.map(x => (x._1,x._2.rating)).toList.sortBy(t => -t._2)
     /*
     First we are mapping restaurants to contain only id and ratings.
-    Then we are sorting the map by key in descending order.
+    Then we are sorting the list of tuples by descending order of 2nd element.
     */
-    if(ratings.keys.size < n)  throw new IllegalArgumentException(s"Only ${ratings.keys.toList} restaurants meets the requirement")
-    else  ratings.keys.toList.slice(0,n) // return List of restaurant Id by rating in descending order
+    if(ratings.size < n)  throw new IllegalArgumentException(s"Only ${ratings.map(x => x._1)} restaurants meets the requirement")
+    else ratings.map(x => x._1).slice(0,n)
   }
 
 
-  def topRestaurant(location:String,restaurantType:List[String],n:Int):List[Int] = {
+  def topRestaurantByLocation(location:String,restaurantType:List[String],n:Int):List[Int] = {
     if(n <= 0)  throw new IllegalArgumentException("Negative number")
 
     val filtered = restaurants.filter(x =>
@@ -54,10 +53,10 @@ object Main extends App {
     */
     if (filtered.size <= 0) throw new IllegalArgumentException("No restaurants satisfying the criteria")
 
-    val ratings = filtered.map(x => x._1->x._2.rating)  // It will create Map(restaurantId -> rating).
-    val sortedRatings = ListMap(ratings.toSeq.sortWith(_._2 > _._2):_*).keys // Will sort Map by value in descending order
-    if(sortedRatings.size < n)  throw new IllegalArgumentException(s"Only $sortedRatings restaurants meets the requirement")
-    else  sortedRatings.slice(0,n).toList // return List of restaurant Id's
+    val sortedRatings = filtered.map(x => (x._1,x._2.rating)).toList.sortBy(t => -t._2)  // It will create List(restaurantId , rating).
+
+    if(sortedRatings.size < n)  throw new IllegalArgumentException(s"Only ${sortedRatings.map(x => x._1)} restaurants meets the requirement")
+    else  sortedRatings.map(x => x._1).slice(0,n) // return List of restaurant Id's
   }
 
 
@@ -77,8 +76,9 @@ object Main extends App {
   //println(noOfCuisines()("Basavanagudi"))
   //println(restaurants(5))
   //println(noOfDistinctLocations().length)
-  //println(topRestaurantByRating(100))
-  println(topRestaurant("dsadasdasdas",List("Casual Dining"),2))
+  //println(topRestaurantByRating(10))
+  //println(topRestaurant("Basavanagudi",List("Casual Dining"),2))
 
   //println(topRestaurantByVote("Basavanagudi",20))
+  println(topRestaurantByLocation("Basavanagudi",List("Casual Dining"),10))
 }
