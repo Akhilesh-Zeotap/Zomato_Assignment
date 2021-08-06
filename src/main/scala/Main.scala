@@ -7,24 +7,18 @@ object Main extends App {
     // we can use this to find dishes liked in any restaurant by querying it's ID
   }
 
-
-  def noOfCuisines(): scala.collection.mutable.Map[String, Int] = {
-    val cuisines: scala.collection.mutable.Map[String, Set[String]] = scala.collection.mutable.Map()
-    // cuisines is Map(Location -> cuisines in that location)
-
-    for (restaurant <- restaurants) { // iterating through all restaurants
-      val location = restaurant._2.location // store the location of current restaurant
-      val listOfCuisines = restaurant._2.typesOfCuisines.toSet // store type of cuisines in current restaurant
-
-      if (cuisines.contains(location))
-        for (c <- listOfCuisines) cuisines(location) += c // iterating through all the cuisines in current restaurant and adding it to set
-      else
-        cuisines += (location -> listOfCuisines)
-    }
-    cuisines.map(x => (x._1, x._2.size)) // Map set of cuisines to it's size as per requirement
-    // Will return Map(Location -> cuisines in that location), we can query any location with this
+  def noOfCuisinesByLocation(location: String) = {
+    noOfCuisines()(location)
   }
 
+  def noOfCuisines(): Map[String, Int] = {
+    restaurants.foldLeft(Map[String, Set[String]]())((cuisines, restaurant) => {
+      val location = restaurant._2.location
+      val listOfCuisines = restaurant._2.typesOfCuisines.toSet
+      cuisines.+(location -> listOfCuisines.++(cuisines.getOrElse(location, Set())))
+    }).map(x => (x._1, x._2.size))
+    // Will return Map(Location -> cuisines in that location), we can query any location with this
+  }
 
   def noOfDistinctLocations(): List[String] = {
     restaurants.map(x => x._2.location).toList.distinct // Will return list of Distinct Location present in dataset
@@ -53,10 +47,10 @@ object Main extends App {
     */
     if (filtered.size <= 0) throw new IllegalArgumentException("No restaurants satisfying the criteria")
 
-    val sortedRatings = filtered.map(x => (x._1, x._2.rating)).toList.sortBy(t => -t._2) // It will create List(restaurantId , rating).
+    val sortedRatings = filtered.map(x => (x._2.rating, x._1)).toList.sortBy(t => -t._1) // It will create List(restaurantId , rating).
 
-    if (sortedRatings.size < n) throw new IllegalArgumentException(s"Only ${sortedRatings.map(x => x._1)} restaurants meets the requirement")
-    else sortedRatings.map(x => x._1).slice(0, n) // return List of restaurant Id's
+    if (sortedRatings.size < n) throw new IllegalArgumentException(s"Only ${sortedRatings.map(x => x._2)} restaurants meets the requirement")
+    else sortedRatings.map(x => x._2).slice(0, n) // return List of restaurant Id's
   }
 
 
@@ -72,4 +66,6 @@ object Main extends App {
     val sortedRatings = ratings.sortBy(t => (t._1, -t._2)) // first sort by votes in ascending order if equal then sort by rating in descending order
     sortedRatings.map(x => x._3).slice(0, n) // return List of restaurant Id's
   }
+
+  println(noOfCuisines()("East Bangalore"))
 }
