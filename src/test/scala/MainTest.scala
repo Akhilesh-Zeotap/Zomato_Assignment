@@ -6,7 +6,7 @@ class MainTest extends FunSuite {
   }
 
   test("Number of distinct cuisines at Basavanagudi") {
-    assert(Main.noOfCuisines()("Basavanagudi") === 12)
+    assert(Main.noOfCuisines()("Basavanagudi") === 87)
   }
 
 
