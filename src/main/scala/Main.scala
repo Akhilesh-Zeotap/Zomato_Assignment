@@ -2,29 +2,6 @@ import Restaurant.restaurants
 
 object Main extends App {
 
-  def nofOfDishesLiked(): Map[Int, Int] = {
-    restaurants.map(x => x._1 -> x._2.dishesLiked.length) // Function will return Map(restaurantId -> dishesLiked.length)
-    // we can use this to find dishes liked in any restaurant by querying it's ID
-  }
-
-  def noOfCuisinesByLocation(location: String) = {
-    noOfCuisines()(location)
-  }
-
-  def noOfCuisines(): Map[String, Int] = {
-    restaurants.foldLeft(Map[String, Set[String]]())((cuisines, restaurant) => {
-      val location = restaurant._2.location
-      val listOfCuisines = restaurant._2.typesOfCuisines.toSet
-      cuisines.+(location -> listOfCuisines.++(cuisines.getOrElse(location, Set())))
-    }).map(x => (x._1, x._2.size))
-    // Will return Map(Location -> cuisines in that location), we can query any location with this
-  }
-
-  def noOfDistinctLocations(): List[String] = {
-    restaurants.map(x => x._2.location).toList.distinct // Will return list of Distinct Location present in dataset
-  }
-
-
   def topRestaurantByRating(n: Int): List[Int] = {
     if (n <= 0) throw new IllegalArgumentException("Negative number")
     val ratings = restaurants.map(x => (x._1, x._2.rating)).toList.sortBy(t => -t._2)
@@ -67,5 +44,37 @@ object Main extends App {
     sortedRatings.map(x => x._3).slice(0, n) // return List of restaurant Id's
   }
 
-  println(noOfCuisines()("East Bangalore"))
+
+  def nofOfDishesLiked(): Map[Int, Int] = {
+    restaurants.map(x => x._1 -> x._2.dishesLiked.length) // Function will return Map(restaurantId -> dishesLiked.length)
+    // we can use this to find dishes liked in any restaurant by querying it's ID
+  }
+
+
+  def noOfDistinctLocations(): List[String] = {
+    restaurants.map(x => x._2.location).toList.distinct // Will return list of Distinct Location present in dataset
+  }
+
+
+  def noOfCuisinesByLocation(location: String) = {
+    noOfCuisines()(location)
+  }
+
+
+  def noOfCuisines(): Map[String, Int] = {
+    restaurants.foldLeft(Map[String, Set[String]]())((cuisines, restaurant) => {
+      val location = restaurant._2.location
+      val listOfCuisines = restaurant._2.typesOfCuisines.toSet
+      cuisines.+(location -> listOfCuisines.++(cuisines.getOrElse(location, Set())))
+    }).map(x => (x._1, x._2.size))
+    // Will return Map(Location -> cuisines in that location), we can query any location with this
+  }
+
+
+  def restaurantCountForCuisine() = {
+    restaurants.foldLeft(Map[String, Int]())((cnt,restaurant) => {
+      val listOfCuisines = restaurant._2.typesOfCuisines.toSet
+      cnt ++ listOfCuisines.map(x => x->1).map{ case (k,v) => k -> (v + cnt.getOrElse(k,0)) }
+    })
+  }
 }
