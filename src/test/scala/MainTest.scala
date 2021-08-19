@@ -25,5 +25,9 @@ class MainTest extends FunSuite {
   test("Top restaurants by rating in given location but queried number is large"){
     assertThrows[IllegalArgumentException](Main.topRestaurantByLocation("Basavanagudi",List("North Indian", "Rajasthani"),100000))
   }
+
+  test("Number of Distinct locations"){
+    assert(Main.noOfDistinctLocations().size == 94)
+  }
 }
 
