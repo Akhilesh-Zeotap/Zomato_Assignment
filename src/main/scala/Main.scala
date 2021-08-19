@@ -77,4 +77,6 @@ object Main extends App {
       cnt ++ listOfCuisines.map(x => x->1).map{ case (k,v) => k -> (v + cnt.getOrElse(k,0)) }
     })
   }
+
+
 }
